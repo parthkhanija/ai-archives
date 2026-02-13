@@ -35,6 +35,12 @@ async function fetchConversations(): Promise<ConversationRecord[]> {
       },
       cache: 'no-store', // Disable caching to get fresh data
     });
+    /*return (
+    <div>
+      <h1>AI Archives</h1>
+      <p>Static version - backend features disabled</p>
+    </div>
+  );*/
 
     if (!response.ok) {
       throw new Error(`Failed to fetch conversations: ${response.status} ${response.statusText}`);

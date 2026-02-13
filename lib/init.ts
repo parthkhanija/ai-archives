@@ -8,6 +8,11 @@ import { s3Client } from './storage/s3';
  * @throws Error if initialization fails
  */
 export async function initializeApp(): Promise<void> {
+  if (process.env.NODE_ENV === 'production' && process.env.NEXT_PUBLIC_STATIC_EXPORT === 'true') {
+    console.log('Skipping initialization for static export');
+    return;
+  }
+  
   try {
     // Load configuration
     const config = loadConfig();
