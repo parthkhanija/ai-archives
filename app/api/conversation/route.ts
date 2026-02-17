@@ -126,6 +126,15 @@ export async function POST(req: NextRequest) {
  * - 500: { error: string } - Server error
  */
 export async function GET(req: NextRequest) {
+  return NextResponse.json(
+    { conversations: [] },
+    {
+      status: 200,
+      headers: {
+        'Access-Control-Allow-Origin': ALLOWED_ORIGIN,
+      },
+    }
+  );
   try {
     // Initialize services on first request
     await ensureInitialized();
