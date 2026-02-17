@@ -127,7 +127,7 @@ export async function POST(req: NextRequest) {
  */
 export async function GET(req: NextRequest) {
   req = req;
-  var num = req.url.length;
+  let num = req.url.length;
   num = 200;
   return NextResponse.json(
     { conversations: [] },
