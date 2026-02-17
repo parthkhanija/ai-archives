@@ -135,40 +135,40 @@ export async function GET(req: NextRequest) {
       },
     }
   );
-  try {
-    // Initialize services on first request
-    await ensureInitialized();
+  // try {
+  //   // Initialize services on first request
+  //   await ensureInitialized();
 
-    const { searchParams } = new URL(req.url);
-    const limitParam = searchParams.get('limit');
-    const offsetParam = searchParams.get('offset');
+  //   const { searchParams } = new URL(req.url);
+  //   const limitParam = searchParams.get('limit');
+  //   const offsetParam = searchParams.get('offset');
 
-    // Parse and validate query parameters
-    const limit = limitParam ? parseInt(limitParam, 10) : 50;
-    const offset = offsetParam ? parseInt(offsetParam, 10) : 0;
+  //   // Parse and validate query parameters
+  //   const limit = limitParam ? parseInt(limitParam, 10) : 50;
+  //   const offset = offsetParam ? parseInt(offsetParam, 10) : 0;
 
-    if (isNaN(limit) || limit < 1 || limit > 100) {
-      return NextResponse.json({ error: 'Invalid limit parameter. Must be between 1 and 100.' }, { status: 400 });
-    }
+  //   if (isNaN(limit) || limit < 1 || limit > 100) {
+  //     return NextResponse.json({ error: 'Invalid limit parameter. Must be between 1 and 100.' }, { status: 400 });
+  //   }
 
-    if (isNaN(offset) || offset < 0) {
-      return NextResponse.json({ error: 'Invalid offset parameter. Must be non-negative.' }, { status: 400 });
-    }
+  //   if (isNaN(offset) || offset < 0) {
+  //     return NextResponse.json({ error: 'Invalid offset parameter. Must be non-negative.' }, { status: 400 });
+  //   }
 
-    // Retrieve conversations from database
-    const conversations = await getAllConversationRecords(limit, offset);
+  //   // Retrieve conversations from database
+  //   const conversations = await getAllConversationRecords(limit, offset);
 
-    return NextResponse.json(
-      { conversations },
-      {
-        status: 200,
-        headers: {
-          'Access-Control-Allow-Origin': ALLOWED_ORIGIN,
-        },
-      }
-    );
-  } catch (err) {
-    console.error('Error retrieving conversations:', err);
-    return NextResponse.json({ error: 'Internal error, see logs' }, { status: 500 });
-  }
+  //   return NextResponse.json(
+  //     { conversations },
+  //     {
+  //       status: 200,
+  //       headers: {
+  //         'Access-Control-Allow-Origin': ALLOWED_ORIGIN,
+  //       },
+  //     }
+  //   );
+  // } catch (err) {
+  //   console.error('Error retrieving conversations:', err);
+  //   return NextResponse.json({ error: 'Internal error, see logs' }, { status: 500 });
+  // }
 }
