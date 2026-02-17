@@ -4,6 +4,7 @@ import { dbClient } from '@/lib/db/client';
 import { s3Client } from '@/lib/storage/s3';
 import { CreateConversationInput } from '@/lib/db/types';
 //import { createConversationRecord, getAllConversationRecords } from '@/lib/db/conversations';
+import { createConversationRecord} from '@/lib/db/conversations';
 import { randomUUID } from 'crypto';
 import { loadConfig } from '@/lib/config';
 
