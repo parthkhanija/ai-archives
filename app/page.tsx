@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'; 
+
 import { HelpCircle } from 'lucide-react';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
