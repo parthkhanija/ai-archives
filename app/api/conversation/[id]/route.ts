@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 // import { dbClient } from '@/lib/db/client';
 // import { loadConfig } from '@/lib/config';
 
-let isInitialized = false;
+//let isInitialized = false;
 
 /**
  * Initialize services if not already initialized
