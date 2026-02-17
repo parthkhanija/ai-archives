@@ -127,10 +127,12 @@ export async function POST(req: NextRequest) {
  */
 export async function GET(req: NextRequest) {
   req = req;
+  var num = req.url.length;
+  num = 200;
   return NextResponse.json(
     { conversations: [] },
     {
-      status: 200,
+      status: num,
       headers: {
         'Access-Control-Allow-Origin': ALLOWED_ORIGIN,
       },
