@@ -125,7 +125,7 @@ export async function POST(req: NextRequest) {
  * - 400: { error: string } - Invalid request parameters
  * - 500: { error: string } - Server error
  */
-export async function GET(_req: NextRequest) {
+export async function GET(req: NextRequest) {
   return NextResponse.json(
     { conversations: [] },
     {
@@ -139,7 +139,7 @@ export async function GET(_req: NextRequest) {
   //   // Initialize services on first request
   //   await ensureInitialized();
 
-  //   const { searchParams } = new URL(req.url);
+     const { searchParams } = new URL(req.url);
   //   const limitParam = searchParams.get('limit');
   //   const offsetParam = searchParams.get('offset');
 
