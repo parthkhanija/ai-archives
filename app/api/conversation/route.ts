@@ -125,7 +125,7 @@ export async function POST(req: NextRequest) {
  * - 400: { error: string } - Invalid request parameters
  * - 500: { error: string } - Server error
  */
-export async function GET(req: NextRequest) {
+export async function GET(_req: NextRequest) {
   return NextResponse.json(
     { conversations: [] },
     {
