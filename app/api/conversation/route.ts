@@ -1,36 +1,36 @@
-import { NextResponse } from 'next/server';
-//import { NextRequest, NextResponse } from 'next/server';
-// import { parseHtmlToConversation } from '@/lib/parsers';
-// import { dbClient } from '@/lib/db/client';
-// import { s3Client } from '@/lib/storage/s3';
-// import { CreateConversationInput } from '@/lib/db/types';
-// //import { createConversationRecord, getAllConversationRecords } from '@/lib/db/conversations';
+//import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { parseHtmlToConversation } from '@/lib/parsers';
+import { dbClient } from '@/lib/db/client';
+import { s3Client } from '@/lib/storage/s3';
+import { CreateConversationInput } from '@/lib/db/types';
+import { createConversationRecord, getAllConversationRecords } from '@/lib/db/conversations';
 // import { createConversationRecord} from '@/lib/db/conversations';
-// import { randomUUID } from 'crypto';
-// import { loadConfig } from '@/lib/config';
+import { randomUUID } from 'crypto';
+import { loadConfig } from '@/lib/config';
 
-//let isInitialized = false;
+let isInitialized = false;
 
 /**
  * Initialize services if not already initialized
  */
-// async function ensureInitialized() {
-//   if (!isInitialized) {
-//     try {
-//       const config = loadConfig();
-//       await dbClient.initialize(config.database);
-//       s3Client.initialize(config.s3);
-//       isInitialized = true;
-//     } catch (error) {
-//       // If S3 client is already initialized, that's fine
-//       if (error instanceof Error && error.message.includes('already initialized')) {
-//         isInitialized = true;
-//       } else {
-//         throw error;
-//       }
-//     }
-//   }
-// }
+async function ensureInitialized() {
+  if (!isInitialized) {
+    try {
+      const config = loadConfig();
+      await dbClient.initialize(config.database);
+      s3Client.initialize(config.s3);
+      isInitialized = true;
+    } catch (error) {
+      // If S3 client is already initialized, that's fine
+      if (error instanceof Error && error.message.includes('already initialized')) {
+        isInitialized = true;
+      } else {
+        throw error;
+      }
+    }
+  }
+}
 
 const ALLOWED_ORIGIN = '*';
 
@@ -60,67 +60,67 @@ export async function OPTIONS() {
  * - 400: { error: string } - Invalid request
  * - 500: { error: string } - Server error
  */
-// export async function POST(req: NextRequest) {
-export async function POST() {
-  return NextResponse.json(
-    { error: 'Service unavailable currently' },
-    {
-      status: 503,
-      headers: {
-        'Access-Control-Allow-Origin': ALLOWED_ORIGIN,
-      },
-    }
-  );
-  // try {
-  //   // Initialize services on first request
-  //   //await ensureInitialized();
-
-  //   const formData = await req.formData();
-  //   const file = formData.get('htmlDoc');
-  //   const model = formData.get('model')?.toString() ?? 'ChatGPT';
-
-  //   // Validate input
-  //   if (!(file instanceof Blob)) {
-  //     return NextResponse.json({ error: '`htmlDoc` must be a file field' }, { status: 400 });
+export async function POST(req: NextRequest) {
+// export async function POST() {
+  // return NextResponse.json(
+  //   { error: 'Service unavailable currently' },
+  //   {
+  //     status: 503,
+  //     headers: {
+  //       'Access-Control-Allow-Origin': ALLOWED_ORIGIN,
+  //     },
   //   }
+  // );
+  try {
+    // Initialize services on first request
+    //await ensureInitialized();
 
-  //   // Parse the conversation from HTML
-  //   const html = await file.text();
-  //   const conversation = await parseHtmlToConversation(html, model);
+    const formData = await req.formData();
+    const file = formData.get('htmlDoc');
+    const model = formData.get('model')?.toString() ?? 'ChatGPT';
 
-  //   // Generate a unique ID for the conversation
-  //   const conversationId = randomUUID();
+    // Validate input
+    if (!(file instanceof Blob)) {
+      return NextResponse.json({ error: '`htmlDoc` must be a file field' }, { status: 400 });
+    }
 
-  //   // Store only the conversation content in S3
-  //   const contentKey = await s3Client.storeConversation(conversationId, conversation.content);
+    // Parse the conversation from HTML
+    const html = await file.text();
+    const conversation = await parseHtmlToConversation(html, model);
 
-  //   // Create the database record with metadata
-  //   const dbInput: CreateConversationInput = {
-  //     model: conversation.model,
-  //     scrapedAt: new Date(conversation.scrapedAt),
-  //     sourceHtmlBytes: conversation.sourceHtmlBytes,
-  //     views: 0,
-  //     contentKey,
-  //   };
+    // Generate a unique ID for the conversation
+    const conversationId = randomUUID();
 
-  //   const record = await createConversationRecord(dbInput);
+    // Store only the conversation content in S3
+    const contentKey = await s3Client.storeConversation(conversationId, conversation.content);
 
-  //   // Generate the permalink using the database-generated ID
-  //   const permalink = `${process.env.NEXT_PUBLIC_BASE_URL}/conversation/${record.id}`;
+    // Create the database record with metadata
+    const dbInput: CreateConversationInput = {
+      model: conversation.model,
+      scrapedAt: new Date(conversation.scrapedAt),
+      sourceHtmlBytes: conversation.sourceHtmlBytes,
+      views: 0,
+      contentKey,
+    };
 
-  //   return NextResponse.json(
-  //     { url: permalink },
-  //     {
-  //       status: 201,
-  //       headers: {
-  //         'Access-Control-Allow-Origin': ALLOWED_ORIGIN,
-  //       },
-  //     }
-  //   );
-  // } catch (err) {
-  //   console.error('Error processing conversation:', err);
-  //   return NextResponse.json({ error: 'Internal error, see logs' }, { status: 500 });
-  // }
+    const record = await createConversationRecord(dbInput);
+
+    // Generate the permalink using the database-generated ID
+    const permalink = `${process.env.NEXT_PUBLIC_BASE_URL}/conversation/${record.id}`;
+
+    return NextResponse.json(
+      { url: permalink },
+      {
+        status: 201,
+        headers: {
+          'Access-Control-Allow-Origin': ALLOWED_ORIGIN,
+        },
+      }
+    );
+  } catch (err) {
+    console.error('Error processing conversation:', err);
+    return NextResponse.json({ error: 'Internal error, see logs' }, { status: 500 });
+  }
 }
 
 /**
@@ -137,54 +137,51 @@ export async function POST() {
  * - 400: { error: string } - Invalid request parameters
  * - 500: { error: string } - Server error
  */
-// export async function GET(req: NextRequest) {
-export async function GET() {
-  // req = req;
-  // let num = req.url.length;
-  // num = 200;
-  return NextResponse.json(
-    { conversations: [] },
-    {
-      status: 200,
-      headers: {
-        'Access-Control-Allow-Origin': ALLOWED_ORIGIN,
-      },
+ export async function GET(req: NextRequest) {
+// export async function GET() {
+  // return NextResponse.json(
+  //   { conversations: [] },
+  //   {
+  //     status: 200,
+  //     headers: {
+  //       'Access-Control-Allow-Origin': ALLOWED_ORIGIN,
+  //     },
+  //   }
+  // );
+  try {
+    // Initialize services on first request
+    await ensureInitialized();
+
+    const { searchParams } = new URL(req.url);
+    const limitParam = searchParams.get('limit');
+    const offsetParam = searchParams.get('offset');
+
+    // Parse and validate query parameters
+    const limit = limitParam ? parseInt(limitParam, 10) : 50;
+    const offset = offsetParam ? parseInt(offsetParam, 10) : 0;
+
+    if (isNaN(limit) || limit < 1 || limit > 100) {
+      return NextResponse.json({ error: 'Invalid limit parameter. Must be between 1 and 100.' }, { status: 400 });
     }
-  );
-  // try {
-  //   // Initialize services on first request
-  //   await ensureInitialized();
 
-  //   const { searchParams } = new URL(req.url);
-  //   const limitParam = searchParams.get('limit');
-  //   const offsetParam = searchParams.get('offset');
+    if (isNaN(offset) || offset < 0) {
+      return NextResponse.json({ error: 'Invalid offset parameter. Must be non-negative.' }, { status: 400 });
+    }
 
-  //   // Parse and validate query parameters
-  //   const limit = limitParam ? parseInt(limitParam, 10) : 50;
-  //   const offset = offsetParam ? parseInt(offsetParam, 10) : 0;
+    // Retrieve conversations from database
+    const conversations = await getAllConversationRecords(limit, offset);
 
-  //   if (isNaN(limit) || limit < 1 || limit > 100) {
-  //     return NextResponse.json({ error: 'Invalid limit parameter. Must be between 1 and 100.' }, { status: 400 });
-  //   }
-
-  //   if (isNaN(offset) || offset < 0) {
-  //     return NextResponse.json({ error: 'Invalid offset parameter. Must be non-negative.' }, { status: 400 });
-  //   }
-
-  //   // Retrieve conversations from database
-  //   const conversations = await getAllConversationRecords(limit, offset);
-
-  //   return NextResponse.json(
-  //     { conversations },
-  //     {
-  //       status: 200,
-  //       headers: {
-  //         'Access-Control-Allow-Origin': ALLOWED_ORIGIN,
-  //       },
-  //     }
-  //   );
-  // } catch (err) {
-  //   console.error('Error retrieving conversations:', err);
-  //   return NextResponse.json({ error: 'Internal error, see logs' }, { status: 500 });
-  // }
+    return NextResponse.json(
+      { conversations },
+      {
+        status: 200,
+        headers: {
+          'Access-Control-Allow-Origin': ALLOWED_ORIGIN,
+        },
+      }
+    );
+  } catch (err) {
+    console.error('Error retrieving conversations:', err);
+    return NextResponse.json({ error: 'Internal error, see logs' }, { status: 500 });
+  }
 }
