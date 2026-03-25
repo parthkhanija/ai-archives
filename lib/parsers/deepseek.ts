@@ -6,6 +6,7 @@ import type { Conversation } from '@/types/conversation';
  * @returns Promise resolving to a structured Conversation object
  */
 export async function parseDeepSeek(html: string): Promise<Conversation> {
+  //section is document.querySelectorAll('.ds-virtual-list-visible-items') in this one
   return {
     model: 'DeepSeek',
     content: html,

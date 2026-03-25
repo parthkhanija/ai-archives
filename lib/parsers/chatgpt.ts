@@ -8,19 +8,20 @@ export async function parseChatGPT(html: string): Promise<Conversation> {
   const dom = new JSDOM(html);
   const document = dom.window.document;
 
-  const sections = document.querySelectorAll('section');
+  const sections = document.querySelectorAll('section'); //gets all the messages
 
   let conversationHtml = '<html><head><meta charset="utf-8"></head><body>';
 
   sections.forEach((section) => {
     conversationHtml += section.outerHTML;
+    console.log(section.style)
   });
   
   conversationHtml += '</body></html>';
 
-  console.log('Found sections:', sections.length);
+  console.log('Found sections:', sections.length);                   //this gets logged in my instance running console
   console.log('Conversation HTML length:', conversationHtml.length);
-  
+
   return {
     model: 'ChatGPT',
     content: conversationHtml,
