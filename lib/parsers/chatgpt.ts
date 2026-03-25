@@ -10,6 +10,7 @@ export async function parseChatGPT(html: string): Promise<Conversation> {
 
   const sections = document.querySelectorAll('section'); //gets all the messages
 
+  //external style sheets
   const styleLinks = document.querySelectorAll('link[rel="stylesheet"]');
 
   let conversationHtml = '<html><head><meta charset="utf-8"></head><body>';
@@ -30,6 +31,8 @@ export async function parseChatGPT(html: string): Promise<Conversation> {
   console.log('Found sections:', sections.length);                   //this gets logged in my instance running console
   console.log('Found stylesheet links:', styleLinks.length);
   console.log('Conversation HTML length:', conversationHtml.length);
+
+  console.log(html);
 
   return {
     model: 'ChatGPT',
